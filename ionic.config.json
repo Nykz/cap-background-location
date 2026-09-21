@@ -1,0 +1,7 @@
+{
+  "name": "cap-background-location",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
