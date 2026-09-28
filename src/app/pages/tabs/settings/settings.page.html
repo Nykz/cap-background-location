@@ -1,0 +1,142 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Settings</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Settings</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="12">
+        <app-native-only-banner></app-native-only-banner>
+
+        <app-permission-status
+          [status]="permissions.status()"
+          [busy]="permissions.busy()"
+          [platform]="platform.platform"
+          (requestForeground)="permissions.requestForeground()"
+          (requestBackground)="permissions.requestBackground()"
+          (openSettings)="permissions.openSettings()"
+          (requestFullAccuracy)="permissions.requestTemporaryFullAccuracy()"
+        ></app-permission-status>
+
+        <form novalidate (submit)="$event.preventDefault(); save()" aria-label="Tracking settings">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Tracking</ion-card-title>
+              <ion-card-subtitle>Applied the next time tracking starts</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content class="ion-no-padding">
+              <ion-list lines="full">
+                <ion-item>
+                  <ion-select label="Accuracy" interface="popover" [formField]="form.accuracy" data-testid="accuracy">
+                    @for (option of accuracyOptions; track option.value) {
+                      <ion-select-option [value]="option.value">{{ option.label }}</ion-select-option>
+                    }
+                  </ion-select>
+                </ion-item>
+                <ion-item>
+                  <ion-range
+                    label="Distance filter"
+                    labelPlacement="stacked"
+                    [min]="0"
+                    [max]="200"
+                    [step]="5"
+                    [pin]="true"
+                    [pinFormatter]="formatMeters"
+                    [snaps]="false"
+                    [formField]="form.distanceFilter"
+                    aria-label="Distance filter in meters"
+                  ></ion-range>
+                  <ion-note slot="end" class="app-figure" data-testid="distance-filter-value">{{ model().distanceFilter }} m</ion-note>
+                </ion-item>
+
+                @if (showAndroid) {
+                  <ion-list-header>
+                    <ion-label>Android</ion-label>
+                  </ion-list-header>
+                  <ion-item>
+                    <ion-select label="Update interval" interface="popover" [formField]="form.androidInterval">
+                      @for (option of intervalOptions; track option.value) {
+                        <ion-select-option [value]="option.value">{{ option.label }}</ion-select-option>
+                      }
+                    </ion-select>
+                  </ion-item>
+                  <ion-item>
+                    <ion-toggle [formField]="form.androidForceLocationManager">
+                      <ion-label class="ion-text-wrap">
+                        Force platform LocationManager
+                        <p>Skip Google Play fused provider (more battery)</p>
+                      </ion-label>
+                    </ion-toggle>
+                  </ion-item>
+                  <ion-item>
+                    <ion-input
+                      label="Notification title"
+                      labelPlacement="stacked"
+                      [formField]="form.notificationTitle"
+                      [errorText]="visibleError(form.notificationTitle())"
+                      data-testid="notification-title"
+                    ></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-input
+                      label="Notification text"
+                      labelPlacement="stacked"
+                      [formField]="form.notificationText"
+                      [errorText]="visibleError(form.notificationText())"
+                      data-testid="notification-text"
+                    ></ion-input>
+                  </ion-item>
+                }
+
+                @if (showIos) {
+                  <ion-list-header>
+                    <ion-label>iOS</ion-label>
+                  </ion-list-header>
+                  <ion-item>
+                    <ion-select label="Activity type" interface="popover" [formField]="form.iosActivityType">
+                      @for (option of activityOptions; track option.value) {
+                        <ion-select-option [value]="option.value">{{ option.label }}</ion-select-option>
+                      }
+                    </ion-select>
+                  </ion-item>
+                  <ion-item>
+                    <ion-toggle [formField]="form.iosPausesAutomatically">
+                      <ion-label class="ion-text-wrap">
+                        Pause automatically
+                        <p>Saves battery when stationary; may stay silent for long periods</p>
+                      </ion-label>
+                    </ion-toggle>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-toggle [formField]="form.iosShowBackgroundIndicator">
+                      Show background location indicator
+                    </ion-toggle>
+                  </ion-item>
+                }
+              </ion-list>
+
+              <div class="app-actions ion-padding">
+                <ion-button type="submit" expand="block" data-testid="save-settings">
+                  <ion-icon slot="start" name="save-outline" aria-hidden="true"></ion-icon>
+                  Save settings
+                </ion-button>
+                <ion-button expand="block" fill="clear" color="medium" (click)="restoreDefaults()">
+                  <ion-icon slot="start" name="refresh-outline" aria-hidden="true"></ion-icon>
+                  Restore defaults
+                </ion-button>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </form>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

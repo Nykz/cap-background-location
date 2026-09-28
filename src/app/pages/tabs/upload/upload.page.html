@@ -1,0 +1,228 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Upload</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Upload</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="12">
+        <app-native-only-banner></app-native-only-banner>
+
+        <form novalidate (submit)="$event.preventDefault(); apply()" aria-label="Queue and upload configuration">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Local queue</ion-card-title>
+              <ion-card-subtitle>Store every position natively so none are lost</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content class="ion-no-padding">
+              <ion-list lines="full">
+                <ion-item>
+                  <ion-toggle [formField]="form.queueEnabled" data-testid="queue-enabled">
+                    Record positions to the queue
+                  </ion-toggle>
+                </ion-item>
+                <ion-item lines="none">
+                  <ion-input
+                    type="number"
+                    inputmode="numeric"
+                    label="Max. queued positions"
+                    labelPlacement="stacked"
+                    helperText="≈210 bytes each · oldest dropped first when full"
+                    [formField]="form.maxSize"
+                    [errorText]="visibleError(form.maxSize())"
+                    data-testid="max-size"
+                  ></ion-input>
+                </ion-item>
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>HTTP upload</ion-card-title>
+              <ion-card-subtitle>Batched POST with retries — runs without the web view</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content class="ion-no-padding">
+              <ion-list lines="full">
+                <ion-item>
+                  <ion-toggle [formField]="form.uploadEnabled" data-testid="upload-enabled">
+                    Upload positions to a server
+                  </ion-toggle>
+                </ion-item>
+                @if (model().uploadEnabled) {
+                  <ion-item>
+                    <ion-input
+                      type="url"
+                      inputmode="url"
+                      autocapitalize="off"
+                      label="Endpoint URL"
+                      labelPlacement="stacked"
+                      placeholder="https://api.example.com/positions"
+                      [formField]="form.url"
+                      [errorText]="visibleError(form.url())"
+                      data-testid="upload-url"
+                    ></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-input
+                      type="password"
+                      autocapitalize="off"
+                      autocomplete="off"
+                      label="Bearer token (optional)"
+                      labelPlacement="stacked"
+                      helperText="Sent as Authorization: Bearer …"
+                      [formField]="form.bearerToken"
+                      data-testid="bearer-token"
+                    >
+                      <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+                    </ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-input
+                      type="number"
+                      inputmode="numeric"
+                      label="Batch size"
+                      labelPlacement="stacked"
+                      helperText="Use 1 to upload every position immediately (costs battery)"
+                      [formField]="form.batchSize"
+                      [errorText]="visibleError(form.batchSize())"
+                      data-testid="batch-size"
+                    ></ion-input>
+                  </ion-item>
+                  <ion-item>
+                    <ion-select label="Flush interval" interface="popover" [formField]="form.flushInterval">
+                      @for (option of flushOptions; track option.value) {
+                        <ion-select-option [value]="option.value">{{ option.label }}</ion-select-option>
+                      }
+                    </ion-select>
+                  </ion-item>
+                  <ion-item lines="none">
+                    <ion-input
+                      label="Device label (optional)"
+                      labelPlacement="stacked"
+                      helperText="Sent as extras.device with every request"
+                      [formField]="form.deviceLabel"
+                      [errorText]="visibleError(form.deviceLabel())"
+                    ></ion-input>
+                  </ion-item>
+                }
+              </ion-list>
+
+              <div class="app-actions ion-padding">
+                <ion-button type="submit" expand="block" [disabled]="upload.busy()" data-testid="apply-config">
+                  @if (upload.busy()) {
+                    <ion-spinner slot="start" name="crescent" aria-hidden="true"></ion-spinner>
+                  } @else {
+                    <ion-icon slot="start" name="save-outline" aria-hidden="true"></ion-icon>
+                  }
+                  Apply configuration
+                </ion-button>
+                <ion-button expand="block" fill="outline" (click)="usePlayground()" data-testid="use-playground">
+                  <ion-icon slot="start" name="flask-outline" aria-hidden="true"></ion-icon>
+                  Use test Playground URL
+                </ion-button>
+                <ion-button
+                  expand="block"
+                  fill="outline"
+                  [disabled]="!platform.isNative || !upload.uploadActive()"
+                  (click)="upload.triggerUpload()"
+                >
+                  <ion-icon slot="start" name="cloud-upload-outline" aria-hidden="true"></ion-icon>
+                  Upload now
+                </ion-button>
+                <ion-button expand="block" fill="clear" color="danger" [disabled]="upload.busy()" (click)="reset()">
+                  Discard configuration
+                </ion-button>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </form>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Active native config</ion-card-title>
+            <ion-card-subtitle>Read back with getConfig()</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content class="ion-no-padding">
+            @let active = upload.activeConfig();
+            <ion-list lines="inset" aria-label="Active configuration">
+              <ion-item>
+                <ion-label>Queue size</ion-label>
+                <ion-note slot="end" class="app-figure">{{ active.maxSize ?? '—' }}</ion-note>
+              </ion-item>
+              <ion-item>
+                <ion-label class="ion-text-wrap">
+                  Upload URL
+                  <p class="app-figure">{{ active.url ?? 'Not set' }}</p>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-label>Batch size · flush</ion-label>
+                <ion-note slot="end" class="app-figure">
+                  {{ active.batchSize ?? '—' }} · {{ active.flushInterval ? active.flushInterval / 1000 + ' s' : '—' }}
+                </ion-note>
+              </ion-item>
+              <ion-item lines="none">
+                <ion-label>Authorization header</ion-label>
+                <ion-badge slot="end" [color]="active.headers ? 'success' : 'medium'">
+                  {{ active.headers ? 'Set' : 'None' }}
+                </ion-badge>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Upload failures</ion-card-title>
+            <ion-card-subtitle>401/408/429/5xx retry · other 4xx drop the batch</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content class="ion-no-padding">
+            @if (upload.failures().length) {
+              <ion-list lines="full" aria-label="Upload failures">
+                @for (failure of upload.failures(); track failure.occurredAt) {
+                  <ion-item>
+                    <ion-label class="ion-text-wrap">
+                      <h3>{{ failure.message }}</h3>
+                      <p>{{ failure.occurredAt | date: 'mediumTime' }}</p>
+                    </ion-label>
+                    @if (failure.statusCode) {
+                      <ion-badge slot="end" color="danger">HTTP {{ failure.statusCode }}</ion-badge>
+                    }
+                  </ion-item>
+                }
+              </ion-list>
+              <ion-button expand="block" fill="clear" color="medium" (click)="upload.clearFailures()">
+                <ion-icon slot="start" name="trash-outline" aria-hidden="true"></ion-icon>
+                Clear log
+              </ion-button>
+            } @else {
+              <app-empty-state icon="cloud-upload-outline" title="No failures" subtitle="Failed attempts appear here."></app-empty-state>
+            }
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Testing without a server</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>
+              Open <strong class="app-figure">{{ playgroundWebsite }}</strong> in a desktop browser, generate a
+              session key, paste it as the bearer token and tap “Use test Playground URL”. Uploaded positions
+              appear on its map. Session data is deleted after 14 days — never use it in production.
+            </p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

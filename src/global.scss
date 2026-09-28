@@ -35,3 +35,46 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* ---------------------------------------------------------------------------
+ * App-wide defaults and reusable utilities (tokens live in theme/variables.scss)
+ * ------------------------------------------------------------------------- */
+
+ion-card {
+  --background: var(--app-surface);
+  border-radius: var(--app-radius-md);
+  box-shadow: var(--app-shadow-card);
+
+  ion-card-title {
+    font-size: var(--app-font-size-lg);
+    font-weight: var(--app-font-weight-bold);
+  }
+
+  ion-card-subtitle {
+    text-transform: none;
+    letter-spacing: normal;
+  }
+}
+
+ion-list-header ion-label {
+  font-weight: var(--app-font-weight-semibold);
+}
+
+ion-content ion-grid[fixed] {
+  --ion-grid-width-md: 720px;
+  --ion-grid-width-lg: 720px;
+  --ion-grid-width-xl: 720px;
+}
+
+/* Monospace figures for coordinates, counters and timers */
+.app-figure {
+  font-family: var(--app-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Stacked full-width action buttons inside a card */
+.app-actions {
+  display: grid;
+  gap: var(--app-space-sm);
+  padding-top: var(--app-space-sm);
+}

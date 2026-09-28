@@ -1,0 +1,16 @@
+@if (!platform.isNative) {
+  <ion-card color="warning" role="status" data-testid="native-only-banner">
+    <ion-card-content class="ion-no-padding">
+      <ion-item color="warning" lines="none">
+        <ion-icon slot="start" name="phone-portrait-outline" aria-hidden="true"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <h2>Runs on Android &amp; iOS only</h2>
+          <p>
+            Background geolocation uses native APIs. Run <code>npx cap run android</code> or
+            <code>npx cap run ios</code> to track your location.
+          </p>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+}

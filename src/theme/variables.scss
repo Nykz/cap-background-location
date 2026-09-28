@@ -1,2 +1,66 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+// Design tokens — the only place raw colour / spacing / type values may appear.
+// Ionic theming: https://ionicframework.com/docs/theming/colors
+// Dark mode follows the OS via @ionic/angular/css/palettes/dark.system.css.
+
+:root {
+  // Brand palette (Ionic colour generator format)
+  --ion-color-primary: #0b6e69;
+  --ion-color-primary-rgb: 11, 110, 105;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #0a615c;
+  --ion-color-primary-tint: #237c78;
+
+  --ion-color-secondary: #3d5afe;
+  --ion-color-secondary-rgb: 61, 90, 254;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #364fe0;
+  --ion-color-secondary-tint: #506afe;
+
+  // Typography — system font stack, no remote font CDN
+  --ion-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  --app-font-mono: ui-monospace, 'SF Mono', Menlo, 'Roboto Mono', monospace;
+  --app-font-size-xs: 0.75rem;
+  --app-font-size-sm: 0.875rem;
+  --app-font-size-md: 1rem;
+  --app-font-size-lg: 1.25rem;
+  --app-font-size-xl: 1.75rem;
+  --app-font-weight-regular: 400;
+  --app-font-weight-semibold: 600;
+  --app-font-weight-bold: 700;
+
+  // Spacing
+  --app-space-xs: 4px;
+  --app-space-sm: 8px;
+  --app-space-md: 16px;
+  --app-space-lg: 24px;
+  --app-space-xl: 32px;
+
+  // Shape
+  --app-radius-sm: 8px;
+  --app-radius-md: 14px;
+  --app-radius-lg: 20px;
+  --app-radius-pill: 999px;
+
+  // Surfaces derived from Ionic variables so they flip with dark mode
+  --app-surface: var(--ion-card-background, var(--ion-item-background, var(--ion-background-color)));
+  --app-muted-text: var(--ion-color-medium);
+  --app-accent-soft: rgba(var(--ion-color-primary-rgb), 0.12);
+  --app-live-pulse: rgba(var(--ion-color-success-rgb), 0.45);
+  --app-shadow-card: 0 2px 12px rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ion-color-primary: #4fd1c5;
+    --ion-color-primary-rgb: 79, 209, 197;
+    --ion-color-primary-contrast: #00201e;
+    --ion-color-primary-contrast-rgb: 0, 32, 30;
+    --ion-color-primary-shade: #46b8ad;
+    --ion-color-primary-tint: #61d6cb;
+
+    --app-shadow-card: none;
+  }
+}

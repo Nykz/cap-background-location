@@ -68,3 +68,27 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Playwright
+/playwright-report
+/test-results
+
+# Private: custom AI skills (not shared with the source code)
+/universal-ionic-angular-skills/
+
+# Private: YouTube launch material
+/docs/YOUTUBE_LAUNCH_KIT.md
+
+# Secrets & credentials
+.env
+.env.*
+!.env.example
+.npmrc
+*.keystore
+*.jks
+*.p12
+*.p8
+*.mobileprovision
+keystore.properties
+google-services.json
+GoogleService-Info.plist

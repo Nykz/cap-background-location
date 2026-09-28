@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'cap-background-location',
+  appId: 'com.codingtechnyks.capbackgroundlocation',
+  appName: 'Background Location',
   webDir: 'www'
 };
 

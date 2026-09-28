@@ -1,0 +1,56 @@
+<ion-card>
+  <ion-card-header>
+    <ion-card-title>Permissions</ion-card-title>
+    <ion-card-subtitle>Background tracking needs two steps</ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content class="ion-no-padding">
+    <ion-list lines="full">
+      <ion-item>
+        <ion-icon slot="start" name="locate-outline" color="primary" aria-hidden="true"></ion-icon>
+        <ion-label>
+          <h2>Location</h2>
+          <p>While using the app</p>
+        </ion-label>
+        <ion-badge slot="end" [color]="badgeColor(status()?.location)" data-testid="perm-location">
+          {{ label(status()?.location) }}
+        </ion-badge>
+      </ion-item>
+      <ion-item>
+        <ion-icon slot="start" name="navigate-circle-outline" color="primary" aria-hidden="true"></ion-icon>
+        <ion-label>
+          <h2>Background location</h2>
+          <p>{{ platform() === 'ios' ? '"Always" permission' : '"Allow all the time"' }}</p>
+        </ion-label>
+        <ion-badge slot="end" [color]="badgeColor(status()?.backgroundLocation)" data-testid="perm-background">
+          {{ label(status()?.backgroundLocation) }}
+        </ion-badge>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-icon slot="start" name="notifications-outline" color="primary" aria-hidden="true"></ion-icon>
+        <ion-label>
+          <h2>Notifications</h2>
+          <p>Foreground-service notification (Android 13+)</p>
+        </ion-label>
+        <ion-badge slot="end" [color]="badgeColor(status()?.notifications)" data-testid="perm-notifications">
+          {{ label(status()?.notifications) }}
+        </ion-badge>
+      </ion-item>
+    </ion-list>
+
+    <div class="app-actions ion-padding">
+      <ion-button expand="block" [disabled]="busy()" (click)="requestForeground.emit()">
+        1. Allow location
+      </ion-button>
+      <ion-button expand="block" fill="outline" [disabled]="busy()" (click)="requestBackground.emit()">
+        2. Allow background location
+      </ion-button>
+      @if (platform() === 'ios') {
+        <ion-button expand="block" fill="outline" [disabled]="busy()" (click)="requestFullAccuracy.emit()">
+          Request precise location
+        </ion-button>
+      }
+      <ion-button expand="block" fill="clear" (click)="openSettings.emit()">Open app settings</ion-button>
+    </div>
+  </ion-card-content>
+</ion-card>

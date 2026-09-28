@@ -1,0 +1,26 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="tracker" href="/tabs/tracker" data-testid="tab-tracker">
+      <ion-icon name="navigate-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Tracker</ion-label>
+      @if (tracking.watching()) {
+        <ion-badge color="success" aria-label="Tracking active">Live</ion-badge>
+      }
+    </ion-tab-button>
+    <ion-tab-button tab="queue" href="/tabs/queue" data-testid="tab-queue">
+      <ion-icon name="layers-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Queue</ion-label>
+      @if (queue.pendingCount() > 0) {
+        <ion-badge color="primary">{{ queue.pendingCount() > 999 ? '999+' : queue.pendingCount() }}</ion-badge>
+      }
+    </ion-tab-button>
+    <ion-tab-button tab="upload" href="/tabs/upload" data-testid="tab-upload">
+      <ion-icon name="cloud-upload-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Upload</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="settings" href="/tabs/settings" data-testid="tab-settings">
+      <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
+      <ion-label>Settings</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>

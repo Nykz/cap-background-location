@@ -1,0 +1,28 @@
+@if (positions().length) {
+  <ion-list lines="full" [attr.aria-label]="label()">
+    @for (position of visible(); track trackKey(position)) {
+      <ion-item>
+        <ion-label>
+          <h3 class="app-figure">
+            {{ position.latitude | coordinate: 'lat' }}, {{ position.longitude | coordinate: 'lng' }}
+          </h3>
+          <p>
+            {{ position.timestamp | date: 'mediumTime' }} · ± {{ position.accuracy | number: '1.0-0' }} m ·
+            {{ position.speed | speed }}
+          </p>
+        </ion-label>
+        @if (queueId(position); as id) {
+          <ion-note slot="end" class="app-figure">#{{ id }}</ion-note>
+        }
+        @if (position.simulated) {
+          <ion-badge slot="end" color="danger">Mock</ion-badge>
+        }
+      </ion-item>
+    }
+  </ion-list>
+  <ion-infinite-scroll [disabled]="!canLoadMore()" (ionInfinite)="loadMore($event)">
+    <ion-infinite-scroll-content loadingText="Loading more positions…"></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+} @else {
+  <app-empty-state icon="location-outline" [title]="emptyTitle()" [subtitle]="emptySubtitle()"></app-empty-state>
+}

@@ -1,0 +1,34 @@
+@let s = status();
+<ion-list lines="inset" aria-label="Queue status">
+  <ion-item>
+    <ion-label>Recording to queue</ion-label>
+    <ion-badge slot="end" [color]="queueActive() ? 'success' : 'medium'" data-testid="queue-active">
+      {{ queueActive() ? 'On' : 'Off' }}
+    </ion-badge>
+  </ion-item>
+  <ion-item>
+    <ion-label>HTTP upload</ion-label>
+    <ion-badge slot="end" [color]="uploadActive() ? 'success' : 'medium'" data-testid="upload-active">
+      {{ uploadActive() ? 'On' : 'Off' }}
+    </ion-badge>
+  </ion-item>
+  <ion-item>
+    <ion-label>Pending positions</ion-label>
+    <ion-note slot="end" class="app-figure" data-testid="queue-pending">{{ s ? (s.pendingCount | number) : '—' }}</ion-note>
+  </ion-item>
+  <ion-item>
+    <ion-label>
+      Dropped
+      <p>Queue full, expired or rejected by the server</p>
+    </ion-label>
+    <ion-note slot="end" class="app-figure" [color]="s?.droppedCount ? 'danger' : undefined" data-testid="queue-dropped">
+      {{ s ? (s.droppedCount | number) : '—' }}
+    </ion-note>
+  </ion-item>
+  <ion-item lines="none">
+    <ion-label>Last successful upload</ion-label>
+    <ion-note slot="end" class="app-figure">
+      {{ s?.lastUploadedAt ? (s!.lastUploadedAt | date: 'short') : 'Never' }}
+    </ion-note>
+  </ion-item>
+</ion-list>

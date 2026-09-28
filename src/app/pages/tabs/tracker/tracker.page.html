@@ -1,0 +1,136 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Tracker</ion-title>
+    <ion-buttons slot="end">
+      @if (tracking.watching()) {
+        <ion-chip color="success" class="tracker-page__live-chip" data-testid="status-chip">
+          <ion-icon name="radio-button-on-outline" aria-hidden="true"></ion-icon>
+          <ion-label>Live</ion-label>
+        </ion-chip>
+      } @else {
+        <ion-chip color="medium" data-testid="status-chip">
+          <ion-label>Idle</ion-label>
+        </ion-chip>
+      }
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Tracker</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-refresher slot="fixed" [disabled]="!platform.isNative" (ionRefresh)="refresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="12">
+        <app-native-only-banner></app-native-only-banner>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-subtitle>Watch session</ion-card-subtitle>
+            <ion-card-title data-testid="session-title">
+              {{ tracking.watching() ? 'Recording your trip' : 'Ready to track' }}
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <app-trip-stats [stats]="stats()"></app-trip-stats>
+            @if (tracking.accuracyTooLow()) {
+              <ion-text color="warning">
+                <p class="tracker-page__accuracy-hint" data-testid="accuracy-hint">
+                  Location fixes are too inaccurate to measure distance. Move outdoors, or turn on
+                  Precise Location for this app.
+                </p>
+              </ion-text>
+            }
+
+            <div class="app-actions">
+              <ion-button
+                expand="block"
+                size="large"
+                [color]="tracking.watching() ? 'danger' : 'primary'"
+                [disabled]="!platform.isNative || tracking.busy()"
+                (click)="toggleTracking()"
+                data-testid="toggle-tracking"
+              >
+                @if (tracking.busy()) {
+                  <ion-spinner slot="start" name="crescent" aria-hidden="true"></ion-spinner>
+                } @else {
+                  <ion-icon slot="start" [name]="tracking.watching() ? 'stop-outline' : 'play-outline'" aria-hidden="true"></ion-icon>
+                }
+                {{ tracking.watching() ? 'Stop tracking' : 'Start tracking' }}
+              </ion-button>
+              <ion-button
+                expand="block"
+                fill="outline"
+                [disabled]="!platform.isNative || tracking.busy()"
+                (click)="getCurrentPosition()"
+                data-testid="current-position"
+              >
+                <ion-icon slot="start" name="locate-outline" aria-hidden="true"></ion-icon>
+                Get current position
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        @if (tracking.lastError(); as error) {
+          <ion-card color="danger" role="alert" data-testid="tracking-error">
+            <ion-card-header>
+              <ion-card-subtitle>
+                <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+                {{ error.code ?? 'ERROR' }}
+              </ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>{{ error.message }}</ion-card-content>
+          </ion-card>
+        }
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Latest position</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="ion-no-padding">
+            @if (tracking.latestPosition(); as position) {
+              <app-position-details [position]="position"></app-position-details>
+            } @else {
+              <app-empty-state
+                icon="location-outline"
+                title="No fix yet"
+                subtitle="Start tracking or request the current position."
+              ></app-empty-state>
+            }
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Live feed</ion-card-title>
+            <ion-card-subtitle>positionChange events while the app is open</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content class="ion-no-padding">
+            <app-position-list
+              label="Live positions"
+              [positions]="tracking.livePositions()"
+              [pageSize]="20"
+              emptyTitle="Waiting for positions"
+              emptySubtitle="Background positions are stored in the queue."
+            ></app-position-list>
+            @if (tracking.livePositions().length) {
+              <ion-button expand="block" fill="clear" color="medium" (click)="tracking.clearLiveFeed()">
+                <ion-icon slot="start" name="trash-outline" aria-hidden="true"></ion-icon>
+                Clear live feed
+              </ion-button>
+            }
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

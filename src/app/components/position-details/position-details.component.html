@@ -1,0 +1,60 @@
+@let p = position();
+<ion-list lines="inset" aria-label="Position details">
+  <ion-item>
+    <ion-label>Latitude</ion-label>
+    <ion-note slot="end" class="app-figure" data-testid="position-latitude">{{ p.latitude | coordinate: 'lat' }}</ion-note>
+  </ion-item>
+  <ion-item>
+    <ion-label>Longitude</ion-label>
+    <ion-note slot="end" class="app-figure" data-testid="position-longitude">{{ p.longitude | coordinate: 'lng' }}</ion-note>
+  </ion-item>
+  <ion-item>
+    <ion-label>Accuracy</ion-label>
+    <ion-note slot="end" class="app-figure">± {{ p.accuracy | number: '1.0-1' }} m</ion-note>
+  </ion-item>
+  <ion-item>
+    <ion-label>Altitude</ion-label>
+    <ion-note slot="end" class="app-figure">
+      @if (p.altitude !== null) {
+        {{ p.altitude | number: '1.0-1' }} m
+        @if (p.altitudeAccuracy !== null) {
+          (± {{ p.altitudeAccuracy | number: '1.0-1' }})
+        }
+      } @else {
+        —
+      }
+    </ion-note>
+  </ion-item>
+  <ion-item>
+    <ion-label>Speed</ion-label>
+    <ion-note slot="end" class="app-figure">{{ p.speed | speed }}</ion-note>
+  </ion-item>
+  <ion-item>
+    <ion-label>Bearing</ion-label>
+    <ion-note slot="end" class="app-figure">
+      @if (p.bearing !== null) {
+        {{ p.bearing | number: '1.0-0' }}°
+      } @else {
+        —
+      }
+    </ion-note>
+  </ion-item>
+  <ion-item>
+    <ion-label>Source</ion-label>
+    @switch (p.simulated) {
+      @case (true) {
+        <ion-badge slot="end" color="danger">Mock location</ion-badge>
+      }
+      @case (false) {
+        <ion-badge slot="end" color="success">Real device</ion-badge>
+      }
+      @default {
+        <ion-badge slot="end" color="medium">Not reported</ion-badge>
+      }
+    }
+  </ion-item>
+  <ion-item lines="none">
+    <ion-label>Recorded</ion-label>
+    <ion-note slot="end" class="app-figure">{{ p.timestamp | date: 'mediumTime' }}</ion-note>
+  </ion-item>
+</ion-list>

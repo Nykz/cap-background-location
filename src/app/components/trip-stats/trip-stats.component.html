@@ -1,0 +1,25 @@
+@let s = stats();
+<ion-grid class="ion-no-padding" role="group" aria-label="Trip statistics">
+  <ion-row>
+    <ion-col size="6">
+      <ion-text color="medium"><p>Duration</p></ion-text>
+      <strong class="app-figure" data-testid="stat-duration">{{ s.durationMs | duration }}</strong>
+    </ion-col>
+    <ion-col size="6">
+      <ion-text color="medium"><p>Distance</p></ion-text>
+      <strong class="app-figure" data-testid="stat-distance">{{ s.distanceMeters | distance }}</strong>
+    </ion-col>
+    <ion-col size="6">
+      <ion-text color="medium"><p>Speed</p></ion-text>
+      <strong class="app-figure" data-testid="stat-current-speed">{{ s.currentSpeedMps | speed }}</strong>
+    </ion-col>
+    <ion-col size="6">
+      <ion-text color="medium"><p>Avg speed</p></ion-text>
+      <strong class="app-figure" data-testid="stat-speed">{{ s.averageSpeedMps | speed }}</strong>
+    </ion-col>
+    <ion-col size="6">
+      <ion-text color="medium"><p>Points</p></ion-text>
+      <strong class="app-figure" data-testid="stat-points">{{ s.points }}</strong>
+    </ion-col>
+  </ion-row>
+</ion-grid>

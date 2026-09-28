@@ -1,0 +1,20 @@
+:host {
+  display: block;
+
+  ion-col {
+    padding: var(--app-space-sm) 0;
+
+    p {
+      margin: 0 0 var(--app-space-xs);
+      font-size: var(--app-font-size-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    strong {
+      font-size: var(--app-font-size-lg);
+      font-weight: var(--app-font-weight-bold);
+      color: var(--ion-text-color);
+    }
+  }
+}

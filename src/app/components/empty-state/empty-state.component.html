@@ -1,0 +1,9 @@
+<ion-icon [name]="icon()" color="medium" aria-hidden="true"></ion-icon>
+<ion-text color="dark">
+  <h3>{{ title() }}</h3>
+</ion-text>
+@if (subtitle()) {
+  <ion-text color="medium">
+    <p>{{ subtitle() }}</p>
+  </ion-text>
+}
